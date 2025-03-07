@@ -1,6 +1,7 @@
 import pandas as pd
 from typing import Optional
 from Coord import Coord
+from Dijkstra import Dijkstra
 from Graph import Graph
 from Road import Road
 from City import City
@@ -63,6 +64,19 @@ def main():
 
         road = Road(from_id, to_id, weight)
         graph.add_edge(from_id, to_id, road, weight, isBlocked)
+
+    all_keys = set(graph.get_nodes_data().keys())
+    adjacencies = {
+        key: [(edge[1], edge[2].distance) for edge in graph.get_edges() if edge[0] == key or edge[1] == key]
+        for key in all_keys
+    }
+    disabled_edges = graph.get_disabled_edges()
+
+    dijkstra = Dijkstra(all_keys, adjacencies, disabled_edges)
+    result = dijkstra.shortest_path("x")
+
+    print("Distances:", result.distances)
+    print("Previous:", result.previous)
 
     visualize_graph(graph)
 
